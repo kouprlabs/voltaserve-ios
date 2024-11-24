@@ -11,7 +11,7 @@
 import SwiftUI
 import VoltaserveCore
 
-struct WorkspaceOverview: View {
+struct WorkspaceOverview: View, ViewDataProvider, LoadStateProvider {
     @EnvironmentObject private var tokenStore: TokenStore
     @ObservedObject private var workspaceStore: WorkspaceStore
     @Environment(\.dismiss) private var dismiss
@@ -24,37 +24,61 @@ struct WorkspaceOverview: View {
 
     var body: some View {
         VStack {
-            if let current = workspaceStore.current {
-                VStack {
-                    VOAvatar(name: workspace.name, size: 100)
-                        .padding()
-                    Form {
-                        NavigationLink {
-                            if let root = workspaceStore.root {
-                                FileOverview(root, workspaceStore: workspaceStore)
-                                    .navigationTitle(current.name)
+            if isLoading {
+                ProgressView()
+            } else if let error {
+                VOErrorMessage(error)
+            } else {
+                if let current = workspaceStore.current {
+                    VStack {
+                        VOAvatar(name: workspace.name, size: 100)
+                            .padding()
+                        Form {
+                            NavigationLink {
+                                if let root = workspaceStore.root {
+                                    FileOverview(root, workspaceStore: workspaceStore)
+                                        .navigationTitle(current.name)
+                                }
+                            } label: {
+                                Label("Files", systemImage: "folder")
                             }
-                        } label: {
-                            Label("Files", systemImage: "folder")
-                        }
-                        NavigationLink {
-                            WorkspaceSettings(workspaceStore: workspaceStore) {
-                                dismiss()
+                            NavigationLink {
+                                WorkspaceSettings(workspaceStore: workspaceStore) {
+                                    dismiss()
+                                }
+                            } label: {
+                                Label("Settings", systemImage: "gear")
                             }
-                        } label: {
-                            Label("Settings", systemImage: "gear")
                         }
                     }
                 }
-            } else {
-                ProgressView()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(workspace.name)
         .onAppear {
             workspaceStore.current = workspace
-            workspaceStore.fetchRoot()
+            onAppearOrChange()
         }
+    }
+
+    // MARK: - LoadStateProvider
+
+    var isLoading: Bool {
+        workspaceStore.rootIsLoading
+    }
+
+    var error: String? {
+        workspaceStore.rootError
+    }
+
+    // MARK: - ViewDataProvider
+
+    func onAppearOrChange() {
+        fetchData()
+    }
+
+    func fetchData() {
+        workspaceStore.fetchRoot()
     }
 }

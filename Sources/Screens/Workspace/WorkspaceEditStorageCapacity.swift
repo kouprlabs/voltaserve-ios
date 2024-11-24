@@ -11,14 +11,11 @@
 import SwiftUI
 import VoltaserveCore
 
-struct WorkspaceEditStorageCapacity: View {
+struct WorkspaceEditStorageCapacity: View, FormValidatable, ErrorPresentable {
     @ObservedObject private var workspaceStore: WorkspaceStore
     @Environment(\.dismiss) private var dismiss
     @State private var value: Int?
     @State private var isSaving = false
-    @State private var showError = false
-    @State private var errorTitle: String?
-    @State private var errorMessage: String?
 
     init(workspaceStore: WorkspaceStore) {
         self.workspaceStore = workspaceStore
@@ -44,7 +41,7 @@ struct WorkspaceEditStorageCapacity: View {
                     }
                 }
             }
-            .voErrorAlert(isPresented: $showError, title: errorTitle, message: errorMessage)
+            .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
             .onAppear {
                 value = current.storageCapacity
             }
@@ -53,8 +50,6 @@ struct WorkspaceEditStorageCapacity: View {
                     value = newCurrent.storageCapacity
                 }
             }
-        } else {
-            ProgressView()
         }
     }
 
@@ -68,15 +63,21 @@ struct WorkspaceEditStorageCapacity: View {
         } success: {
             dismiss()
         } failure: { message in
-            errorTitle = "Error: Saving Storage Capacity"
             errorMessage = message
-            showError = true
+            errorIsPresented = true
         } anyways: {
             isSaving = false
         }
     }
 
-    private func isValid() -> Bool {
+    // MARK: - ErrorPresentable
+
+    @State var errorIsPresented: Bool = false
+    @State var errorMessage: String?
+
+    // MARK: - FormValidatable
+
+    func isValid() -> Bool {
         if let value, let current = workspaceStore.current {
             return value > 0 && current.storageCapacity != value
         }

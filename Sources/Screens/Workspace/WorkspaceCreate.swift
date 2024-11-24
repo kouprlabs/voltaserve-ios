@@ -11,16 +11,13 @@
 import SwiftUI
 import VoltaserveCore
 
-struct WorkspaceCreate: View {
+struct WorkspaceCreate: View, FormValidatable, ErrorPresentable {
     @ObservedObject private var workspaceStore: WorkspaceStore
     @Environment(\.dismiss) private var dismiss
     @State private var name: String = ""
     @State private var organization: VOOrganization.Entity?
     @State private var storageCapacity: Int? = 100_000_000_000
     @State private var isProcessing = false
-    @State private var showError = false
-    @State private var errorTitle: String?
-    @State private var errorMessage: String?
     private let onCompletion: ((VOWorkspace.Entity) -> Void)?
 
     init(workspaceStore: WorkspaceStore, onCompletion: ((VOWorkspace.Entity) -> Void)? = nil) {
@@ -76,7 +73,7 @@ struct WorkspaceCreate: View {
                     }
                 }
             }
-            .voErrorAlert(isPresented: $showError, title: errorTitle, message: errorMessage)
+            .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
         }
     }
 
@@ -102,15 +99,21 @@ struct WorkspaceCreate: View {
                 onCompletion(workspace)
             }
         } failure: { message in
-            errorTitle = "Error: Creating Workspace"
             errorMessage = message
-            showError = true
+            errorIsPresented = true
         } anyways: {
             isProcessing = false
         }
     }
 
-    private func isValid() -> Bool {
+    // MARK: - ErrorPresentable
+
+    @State var errorIsPresented: Bool = false
+    @State var errorMessage: String?
+
+    // MARK: - FormValidatable
+
+    func isValid() -> Bool {
         !normalizedName.isEmpty && organization != nil && storageCapacity != nil && storageCapacity! > 0
     }
 }

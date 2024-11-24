@@ -52,8 +52,6 @@ struct GroupEditName: View, FormValidatable, ErrorPresentable {
                     value = newCurrent.name
                 }
             }
-        } else {
-            ProgressView()
         }
     }
 

@@ -19,10 +19,7 @@ struct GroupSelector: View, ViewDataProvider, LoadStateProvider, TimerLifecycle,
     private let onCompletion: ((VOGroup.Entity) -> Void)?
     private let organizationID: String?
 
-    init(
-        organizationID: String?,
-        onCompletion: ((VOGroup.Entity) -> Void)? = nil
-    ) {
+    init(organizationID: String?, onCompletion: ((VOGroup.Entity) -> Void)? = nil) {
         self.organizationID = organizationID
         self.onCompletion = onCompletion
     }
@@ -30,7 +27,7 @@ struct GroupSelector: View, ViewDataProvider, LoadStateProvider, TimerLifecycle,
     var body: some View {
         VStack {
             if isLoading {
-
+                ProgressView()
             } else if let error {
                 VOErrorMessage(error)
             } else {
