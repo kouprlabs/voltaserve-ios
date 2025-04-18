@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct ViewerOCR: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct ViewerOCR: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var viewerOCRStore = ViewerOCRStore()
     private let file: VOFile.Entity
 
@@ -33,18 +33,20 @@ public struct ViewerOCR: View {
         }
         .onAppear {
             viewerOCRStore.id = file.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
     }
 
-    private func assignTokenToStores(_ token: VOToken.Value) {
-        viewerOCRStore.token = token
+    // MARK: - SessionDistributing
+
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        viewerOCRStore.session = session
     }
 }

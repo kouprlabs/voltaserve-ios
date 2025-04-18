@@ -12,7 +12,7 @@ import SwiftData
 import SwiftUI
 
 public struct ServerOverview: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @Query private var servers: [Server]
@@ -141,7 +141,7 @@ public struct ServerOverview: View {
             servers.first(where: { $0.id == server.id })?.isActive = true
             try? context.save()
 
-            tokenStore.recreateClient()
+            sessionStore.recreateClient()
 
             DispatchQueue.main.async {
                 isActivating = false

@@ -34,20 +34,20 @@ public class WorkspaceStore: ObservableObject {
     private var storageClient: VOStorage?
     let searchPublisher = PassthroughSubject<String, Never>()
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 workspaceClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
                 fileClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
                 storageClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

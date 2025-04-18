@@ -20,12 +20,12 @@ public class MosaicStore: ObservableObject {
     private var timer: Timer?
     public var fileID: String?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 mosaicClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

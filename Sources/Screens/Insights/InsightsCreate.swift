@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct InsightsCreate: View, ViewDataProvider, LoadStateProvider, TokenDistributing, FormValidatable,
+public struct InsightsCreate: View, ViewDataProvider, LoadStateProvider, SessionDistributing, FormValidatable,
     ErrorPresentable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var insightsStore = InsightsStore()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -81,14 +81,14 @@ public struct InsightsCreate: View, ViewDataProvider, LoadStateProvider, TokenDi
         }
         .onAppear {
             insightsStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 onAppearOrChange()
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -143,10 +143,10 @@ public struct InsightsCreate: View, ViewDataProvider, LoadStateProvider, TokenDi
         insightsStore.fetchLanguages()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        insightsStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        insightsStore.session = session
     }
 
     // MARK: - FormValidatable

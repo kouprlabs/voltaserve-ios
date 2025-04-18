@@ -26,12 +26,12 @@ public class GroupStore: ObservableObject {
     public let searchPublisher = PassthroughSubject<String, Never>()
     public var organizationID: String?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 groupClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct GroupSettings: View, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var groupStore: GroupStore
     @Environment(\.dismiss) private var dismiss
     @State private var deleteConfirmationIsPresented = false

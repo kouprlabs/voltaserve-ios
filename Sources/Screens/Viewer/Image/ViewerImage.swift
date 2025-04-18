@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct ViewerImage: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct ViewerImage: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var viewerImageStore = ViewerImageStore()
     private let file: VOFile.Entity
 
@@ -36,18 +36,20 @@ public struct ViewerImage: View {
             if let fileExtension = file.snapshot?.preview?.fileExtension {
                 viewerImageStore.fileExtension = String(fileExtension.dropFirst())
             }
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
     }
 
-    private func assignTokenToStores(_ token: VOToken.Value) {
-        viewerImageStore.token = token
+    // MARK: - SessionDistributing
+
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        viewerImageStore.session = session
     }
 }

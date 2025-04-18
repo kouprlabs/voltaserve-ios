@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct SharingUserPermissions: View, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct SharingUserPermissions: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var sharingStore: SharingStore
     @StateObject private var userStore = UserStore()
     @State private var user: VOUser.Entity?
@@ -56,20 +56,20 @@ public struct SharingUserPermissions: View, TokenDistributing {
         }
         .onAppear {
             userStore.organizationID = organization.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        userStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        userStore.session = session
     }
 }

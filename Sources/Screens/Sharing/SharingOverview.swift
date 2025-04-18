@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var sharingStore = SharingStore()
     @Environment(\.dismiss) private var dismiss
     @State private var selection: Tag = .users
@@ -79,8 +79,8 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
         }
         .onAppear {
             sharingStore.fileID = file.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -88,9 +88,9 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: sharingStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sharingStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -146,9 +146,9 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
         sharingStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        sharingStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        sharingStore.session = session
     }
 }

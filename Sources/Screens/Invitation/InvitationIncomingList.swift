@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct InvitationIncomingList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct InvitationIncomingList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var invitationStore = InvitationStore()
     @State private var showInfo = false
     @State private var invitation: VOInvitation.Entity?
@@ -57,8 +57,8 @@ public struct InvitationIncomingList: View, ViewDataProvider, LoadStateProvider,
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Invitations")
         .onAppear {
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -66,9 +66,9 @@ public struct InvitationIncomingList: View, ViewDataProvider, LoadStateProvider,
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -104,10 +104,10 @@ public struct InvitationIncomingList: View, ViewDataProvider, LoadStateProvider,
         invitationStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        invitationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        invitationStore.session = session
     }
 
     // MARK: - ListItemScrollable

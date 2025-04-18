@@ -11,8 +11,8 @@
 import Charts
 import SwiftUI
 
-public struct InsightsChart: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct InsightsChart: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var insightsStore = InsightsStore(pageSize: Constants.pageSize)
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -84,8 +84,8 @@ public struct InsightsChart: View, ViewDataProvider, LoadStateProvider, TimerLif
         }
         .onAppear {
             insightsStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -136,9 +136,9 @@ public struct InsightsChart: View, ViewDataProvider, LoadStateProvider, TimerLif
         insightsStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        insightsStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        insightsStore.session = session
     }
 }

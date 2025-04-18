@@ -10,11 +10,11 @@
 
 import SwiftUI
 
-public struct TaskList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct TaskList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable,
     ErrorPresentable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var taskStore = TaskStore()
     @Environment(\.dismiss) private var dismiss
     @State private var isDismissingAll = false
@@ -72,8 +72,8 @@ public struct TaskList: View, ViewDataProvider, LoadStateProvider, TimerLifecycl
             }
         }
         .onAppear {
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -81,9 +81,9 @@ public struct TaskList: View, ViewDataProvider, LoadStateProvider, TimerLifecycl
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -142,10 +142,10 @@ public struct TaskList: View, ViewDataProvider, LoadStateProvider, TimerLifecycl
         taskStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        taskStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        taskStore.session = session
     }
 
     // MARK: - ListItemScrollable

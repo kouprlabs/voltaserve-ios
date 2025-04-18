@@ -16,29 +16,29 @@ public class ViewerAudioStore: ObservableObject {
 
     public var id: String? {
         didSet {
-            url = buildURL(id: id, token: token, fileExtension: fileExtension)
+            url = buildURL(id: id, session: session, fileExtension: fileExtension)
         }
     }
 
     public var fileExtension: String? {
         didSet {
-            url = buildURL(id: id, token: token, fileExtension: fileExtension)
+            url = buildURL(id: id, session: session, fileExtension: fileExtension)
         }
     }
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
-                url = buildURL(id: id, token: token, fileExtension: fileExtension)
+            if let session {
+                url = buildURL(id: id, session: session, fileExtension: fileExtension)
             }
         }
     }
 
-    private func buildURL(id: String?, token: VOToken.Value?, fileExtension: String?) -> URL? {
-        guard let id, let fileExtension, let token else { return nil }
+    private func buildURL(id: String?, session: VOSession.Value?, fileExtension: String?) -> URL? {
+        guard let id, let fileExtension, let session else { return nil }
         return VOFile(
             baseURL: Config.shared.apiURL,
-            accessToken: token.accessToken
+            accessKey: session.accessKey
         ).urlForPreview(id, fileExtension: fileExtension)
     }
 }

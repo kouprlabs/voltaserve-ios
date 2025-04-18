@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct TaskOverview: View, ErrorPresentable, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct TaskOverview: View, ErrorPresentable, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var taskStore = TaskStore()
     @Environment(\.dismiss) private var dismiss
     @State private var dismissConfirmationIsPresented = false
@@ -127,13 +127,13 @@ public struct TaskOverview: View, ErrorPresentable, TokenDistributing {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("#\(task.id)")
         .onAppear {
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
         .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
@@ -160,9 +160,9 @@ public struct TaskOverview: View, ErrorPresentable, TokenDistributing {
     @State public var errorIsPresented = false
     @State public var errorMessage: String?
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        taskStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        taskStore.session = session
     }
 }

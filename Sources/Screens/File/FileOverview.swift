@@ -12,8 +12,8 @@ import Combine
 import SwiftUI
 import UIKit
 
-public struct FileOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct FileOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var fileStore = FileStore()
     @ObservedObject private var workspaceStore: WorkspaceStore
     @State private var searchText = ""
@@ -64,8 +64,8 @@ public struct FileOverview: View, ViewDataProvider, LoadStateProvider, TimerLife
         .fileSelectionReset(fileStore: fileStore)
         .onAppear {
             fileStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -73,9 +73,9 @@ public struct FileOverview: View, ViewDataProvider, LoadStateProvider, TimerLife
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -117,9 +117,9 @@ public struct FileOverview: View, ViewDataProvider, LoadStateProvider, TimerLife
         fileStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        fileStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        fileStore.session = session
     }
 }

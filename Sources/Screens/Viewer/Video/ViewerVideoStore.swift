@@ -16,27 +16,27 @@ public class ViewerVideoStore: ObservableObject {
 
     public var id: String? {
         didSet {
-            url = buildURL(id: id, fileExtension: fileExtension, token: token)
+            url = buildURL(id: id, fileExtension: fileExtension, session: session)
         }
     }
 
     public var fileExtension: String? {
         didSet {
-            url = buildURL(id: id, fileExtension: fileExtension, token: token)
+            url = buildURL(id: id, fileExtension: fileExtension, session: session)
         }
     }
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            url = buildURL(id: id, fileExtension: fileExtension, token: token)
+            url = buildURL(id: id, fileExtension: fileExtension, session: session)
         }
     }
 
-    private func buildURL(id: String?, fileExtension: String?, token: VOToken.Value?) -> URL? {
-        guard let id, let fileExtension, let token else { return nil }
+    private func buildURL(id: String?, fileExtension: String?, session: VOSession.Value?) -> URL? {
+        guard let id, let fileExtension, let session else { return nil }
         return VOFile(
             baseURL: Config.shared.apiURL,
-            accessToken: token.accessToken
+            accessKey: session.accessKey
         ).urlForPreview(id, fileExtension: fileExtension)
     }
 }

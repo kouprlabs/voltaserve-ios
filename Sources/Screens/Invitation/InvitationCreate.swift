@@ -11,8 +11,8 @@
 import Foundation
 import SwiftUI
 
-public struct InvitationCreate: View, FormValidatable, TokenDistributing, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct InvitationCreate: View, FormValidatable, SessionDistributing, ErrorPresentable {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var invitationStore = InvitationStore()
     @Environment(\.dismiss) private var dismiss
     @State private var commaSeparated = ""
@@ -64,13 +64,13 @@ public struct InvitationCreate: View, FormValidatable, TokenDistributing, ErrorP
         }
         .onAppear {
             invitationStore.organizationID = organizationID
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
         .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
@@ -117,9 +117,9 @@ public struct InvitationCreate: View, FormValidatable, TokenDistributing, ErrorP
         !emails.isEmpty
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        invitationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        invitationStore.session = session
     }
 }

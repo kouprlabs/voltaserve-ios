@@ -22,18 +22,18 @@ public class AccountStore: ObservableObject {
     private var accountClient: VOAccount = .init(baseURL: Config.shared.idpURL)
     private var identityUserClient: VOIdentityUser?
     private var storageClient: VOStorage?
-    public var tokenStore: TokenStore?
+    public var sessionStore: SessionStore?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 identityUserClient = .init(
                     baseURL: Config.shared.idpURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
                 storageClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }
@@ -71,8 +71,8 @@ public class AccountStore: ObservableObject {
         } failure: { message in
             self.identityUserError = message
         } invalidCredentials: {
-            self.tokenStore?.token = nil
-            self.tokenStore?.deleteFromKeychain()
+            self.sessionStore?.session = nil
+            self.sessionStore?.deleteFromKeychain()
         } anyways: {
             self.identityUserIsLoading = false
         }
@@ -131,7 +131,7 @@ public class AccountStore: ObservableObject {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             Task.detached {
-                if await self.identityUser != nil, await self.tokenStore?.token != nil {
+                if await self.identityUser != nil, await self.sessionStore?.session != nil {
                     let user = try await self.fetchIdentityUser()
                     if let user {
                         await MainActor.run {

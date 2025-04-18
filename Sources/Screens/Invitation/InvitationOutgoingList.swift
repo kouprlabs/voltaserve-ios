@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct InvitationOutgoingList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct InvitationOutgoingList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var invitationStore = InvitationStore()
     @StateObject private var organizationStore = OrganizationStore()
     @State private var createIsPresented = false
@@ -75,8 +75,8 @@ public struct InvitationOutgoingList: View, ViewDataProvider, LoadStateProvider,
         }
         .onAppear {
             invitationStore.organizationID = organizationID
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -84,9 +84,9 @@ public struct InvitationOutgoingList: View, ViewDataProvider, LoadStateProvider,
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -124,11 +124,11 @@ public struct InvitationOutgoingList: View, ViewDataProvider, LoadStateProvider,
         organizationStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        invitationStore.token = token
-        organizationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        invitationStore.session = session
+        organizationStore.session = session
     }
 
     // MARK: - ListItemScrollable

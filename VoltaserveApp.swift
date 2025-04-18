@@ -13,12 +13,12 @@ import VoltaserveCore
 
 @main
 struct VoltaserveApp: App {
-    @StateObject private var tokenStore = TokenStore()
+    @StateObject private var sessionStore = SessionStore()
 
     var body: some Scene {
         WindowGroup {
             Voltaserve()
-                .environmentObject(tokenStore)
+                .environmentObject(sessionStore)
         }
     }
 }

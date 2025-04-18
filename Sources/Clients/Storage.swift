@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOStorage {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOStorage {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForAccountUsage())
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOStorage {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForWokrspaceUsage(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOStorage {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForFileUsage(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,

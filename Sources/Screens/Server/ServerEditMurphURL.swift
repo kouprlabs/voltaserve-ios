@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct ServerEditMurphURL: View, FormValidatable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var value = ""
@@ -51,7 +51,7 @@ public struct ServerEditMurphURL: View, FormValidatable {
             server.murphURL = value
             try? context.save()
 
-            tokenStore.recreateClient()
+            sessionStore.recreateClient()
 
             DispatchQueue.main.async {
                 dismiss()

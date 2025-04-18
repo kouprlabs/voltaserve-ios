@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOIdentityUser {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForMe())
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             var request = URLRequest(url: urlForMe())
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -64,7 +64,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForPatchFullName())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -83,7 +83,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForUpdateEmailRequest())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -102,7 +102,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForUpdateEmailConfirmation())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -121,7 +121,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForUpdatePassword())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -145,7 +145,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForUpdatePicture())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
 
             let boundary = UUID().uuidString
             request.setValue(
@@ -191,7 +191,7 @@ public struct VOIdentityUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForDeletePicture())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -240,7 +240,7 @@ public struct VOIdentityUser {
     }
 
     public func urlForPicture(_: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForMe())/picture\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForMe())/picture\(fileExtension)?access_key=\(accessKey)")!
     }
 
     // MARK: - Payloads
@@ -262,10 +262,10 @@ public struct VOIdentityUser {
     }
 
     public struct UpdateEmailConfirmationOptions: Codable {
-        public let token: String
+        public let key: String
 
-        public init(token: String) {
-            self.token = token
+        public init(key: String) {
+            self.key = key
         }
     }
 

@@ -12,8 +12,8 @@ import GLTFKit2
 import SceneKit
 import SwiftUI
 
-public struct Viewer3D: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct Viewer3D: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var viewer3DStore = Viewer3DStore()
     private let file: VOFile.Entity
 
@@ -35,18 +35,20 @@ public struct Viewer3D: View {
         }
         .onAppear {
             viewer3DStore.id = file.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
     }
 
-    private func assignTokenToStores(_ token: VOToken.Value) {
-        viewer3DStore.token = token
+    // MARK: - SessionDistributing
+
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        viewer3DStore.session = session
     }
 }

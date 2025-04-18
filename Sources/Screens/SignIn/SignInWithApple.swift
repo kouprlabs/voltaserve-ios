@@ -12,7 +12,7 @@ import AuthenticationServices
 import SwiftUI
 
 public struct SignInWithApple: View, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @State private var isProcessing = false
     @Environment(\.colorScheme) private var colorScheme
     private let extensions: () -> AnyView
@@ -38,12 +38,12 @@ public struct SignInWithApple: View, ErrorPresentable {
                     switch result {
                     case .success(let authResults):
                         if let credential = authResults.credential as? ASAuthorizationAppleIDCredential,
-                            let identityTokenData = credential.identityToken,
-                            let identityToken = String(data: identityTokenData, encoding: .utf8)
+                            let identityKey = credential.identityToken,
+                            let appleKey = String(data: identityKey, encoding: .utf8)
                         {
                             Task {
                                 await performSignIn(
-                                    identityToken,
+                                    appleKey,
                                     fullName: [credential.fullName?.givenName, credential.fullName?.familyName]
                                         .compactMap { $0 }
                                         .joined(separator: " ")
@@ -69,17 +69,17 @@ public struct SignInWithApple: View, ErrorPresentable {
         .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
     }
 
-    private func performSignIn(_ jwt: String, fullName: String?) async {
-        var token: VOToken.Value?
+    private func performSignIn(_ appleKey: String, fullName: String?) async {
+        var session: VOSession.Value?
         withErrorHandling {
-            token = try await tokenStore.signInWithApple(jwt: jwt, fullName: fullName)
+            session = try await sessionStore.signInWithApple(appleKey: appleKey, fullName: fullName)
             return true
         } before: {
             isProcessing = true
         } success: {
-            if let token {
-                tokenStore.token = token
-                tokenStore.saveInKeychain(token)
+            if let session {
+                sessionStore.session = session
+                sessionStore.saveInKeychain(session)
                 onCompletion?()
             }
         } failure: { message in

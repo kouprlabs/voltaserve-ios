@@ -21,12 +21,12 @@ public class TaskStore: ObservableObject {
     private var timer: Timer?
     private var taskClient: VOTask?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 taskClient = VOTask(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

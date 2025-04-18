@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct MosaicCreate: View, ErrorPresentable, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct MosaicCreate: View, ErrorPresentable, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var mosaicStore = MosaicStore()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -61,13 +61,13 @@ public struct MosaicCreate: View, ErrorPresentable, TokenDistributing {
         }
         .onAppear {
             mosaicStore.fileID = fileID
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
         .presentationDetents([.fraction(0.35)])
@@ -95,9 +95,9 @@ public struct MosaicCreate: View, ErrorPresentable, TokenDistributing {
     @State public var errorIsPresented = false
     @State public var errorMessage: String?
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        mosaicStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        mosaicStore.session = session
     }
 }

@@ -13,7 +13,7 @@ import SwiftData
 import SwiftUI
 
 public struct Voltaserve: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject var appearanceStore = AppearanceStore()
     @Environment(\.modelContext) private var context
     @State private var timer: Timer?
@@ -94,24 +94,24 @@ public struct Voltaserve: View {
                 }
             }
             .onAppear {
-                if let token = tokenStore.loadFromKeyChain() {
-                    if token.isExpired {
-                        tokenStore.token = nil
-                        tokenStore.deleteFromKeychain()
+                if let session = sessionStore.loadFromKeyChain() {
+                    if session.isExpired {
+                        sessionStore.session = nil
+                        sessionStore.deleteFromKeychain()
                         signInIsPresented = true
                     } else {
-                        tokenStore.token = token
+                        sessionStore.session = session
                     }
                 } else {
                     signInIsPresented = true
                 }
 
-                startTokenTimer()
+                startSessionTimer()
             }
-            .onDisappear { stopTokenTimer() }
-            .onChange(of: tokenStore.token) { oldToken, newToken in
-                if oldToken != nil, newToken == nil {
-                    stopTokenTimer()
+            .onDisappear { stopSessionTimer() }
+            .onChange(of: sessionStore.session) { oldSession, newSession in
+                if oldSession != nil, newSession == nil {
+                    stopSessionTimer()
                     // This is hack to mitigate a SwiftUI bug that causes `fullScreenCover` to dismiss
                     // itself unexpectedly without user interaction or a direct code-triggered dismissal.
                     Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
@@ -123,7 +123,7 @@ public struct Voltaserve: View {
             }
             .fullScreenCover(isPresented: $signInIsPresented) {
                 SignIn(extensions: self.extensions.signIn) {
-                    startTokenTimer()
+                    startSessionTimer()
                     signInIsPresented = false
                 }
             }
@@ -135,16 +135,16 @@ public struct Voltaserve: View {
         }
     }
 
-    private func startTokenTimer() {
+    private func startSessionTimer() {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
             Task.detached {
-                guard await tokenStore.token != nil else { return }
-                if let token = await tokenStore.token, token.isExpired {
-                    if let newToken = try await tokenStore.refreshTokenIfNecessary() {
+                guard await sessionStore.session != nil else { return }
+                if let session = await sessionStore.session, session.isExpired {
+                    if let newSession = try await sessionStore.refreshSessionIfNecessary() {
                         await MainActor.run {
-                            tokenStore.token = newToken
-                            tokenStore.saveInKeychain(newToken)
+                            sessionStore.session = newSession
+                            sessionStore.saveInKeychain(newSession)
                         }
                     }
                 }
@@ -152,7 +152,7 @@ public struct Voltaserve: View {
         }
     }
 
-    private func stopTokenTimer() {
+    private func stopSessionTimer() {
         timer?.invalidate()
         timer = nil
     }

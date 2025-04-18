@@ -11,7 +11,7 @@
 import SwiftUI
 
 struct ServerEditSignInStrategy: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var value = SignInStrategy.apple
@@ -50,7 +50,7 @@ struct ServerEditSignInStrategy: View {
             server.signInStrategy = value.rawValue
             try? context.save()
 
-            tokenStore.recreateClient()
+            sessionStore.recreateClient()
 
             DispatchQueue.main.async {
                 dismiss()

@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOWorkspace {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -83,7 +83,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: url())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -102,7 +102,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForName(id))
             request.httpMethod = "PATCH"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -121,7 +121,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForStorageCapacity(id))
             request.httpMethod = "PATCH"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -140,7 +140,7 @@ public struct VOWorkspace {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -305,17 +305,17 @@ public struct VOWorkspace {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(name)
-            hasher.combine(permission.rawValue)
-            hasher.combine(storageCapacity)
-            hasher.combine(updateTime)
-            return hasher.finalize()
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(name)
+            builder.combine(permission.rawValue)
+            builder.combine(storageCapacity)
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

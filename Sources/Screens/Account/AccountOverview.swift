@@ -11,8 +11,8 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var accountStore = AccountStore()
     @StateObject private var invitationStore = InvitationStore()
     @Environment(\.dismiss) private var dismiss
@@ -138,9 +138,9 @@ public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerL
             }
         }
         .onAppear {
-            accountStore.tokenStore = tokenStore
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            accountStore.sessionStore = sessionStore
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -148,9 +148,9 @@ public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerL
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -158,8 +158,8 @@ public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerL
     }
 
     private func performSignOut() {
-        tokenStore.token = nil
-        tokenStore.deleteFromKeychain()
+        sessionStore.session = nil
+        sessionStore.deleteFromKeychain()
         dismiss()
     }
 
@@ -231,10 +231,10 @@ public struct AccountOverview: View, ViewDataProvider, LoadStateProvider, TimerL
         invitationStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        accountStore.token = token
-        invitationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        accountStore.session = session
+        invitationStore.session = session
     }
 }

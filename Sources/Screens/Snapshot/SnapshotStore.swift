@@ -22,12 +22,12 @@ public class SnapshotStore: ObservableObject {
     private var snapshotClient: VOSnapshot?
     public var fileID: String?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 snapshotClient = VOSnapshot(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

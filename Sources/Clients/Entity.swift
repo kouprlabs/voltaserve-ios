@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOEntity {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOEntity {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(id, options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOEntity {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(id, options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOEntity {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForFile(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -84,7 +84,7 @@ public struct VOEntity {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForFile(id))
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,

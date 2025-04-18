@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct AccountSettings: View, ViewDataProvider, LoadStateProvider {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @EnvironmentObject private var appearanceStore: AppearanceStore
     @ObservedObject private var accountStore: AccountStore
     @Environment(\.dismiss) private var dismiss
@@ -92,13 +92,13 @@ public struct AccountSettings: View, ViewDataProvider, LoadStateProvider {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Settings")
         .onAppear {
-            accountStore.tokenStore = tokenStore
-            if tokenStore.token != nil {
+            accountStore.sessionStore = sessionStore
+            if sessionStore.session != nil {
                 onAppearOrChange()
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if newToken != nil {
+        .onChange(of: sessionStore.session) { _, newSession in
+            if newSession != nil {
                 onAppearOrChange()
             }
         }

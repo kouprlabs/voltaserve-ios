@@ -11,10 +11,10 @@
 import Combine
 import SwiftUI
 
-public struct GroupMemberList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct GroupMemberList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var groupStore: GroupStore
     @StateObject private var userStore = UserStore()
     @State private var addMemberIsPresentable = false
@@ -82,8 +82,8 @@ public struct GroupMemberList: View, ViewDataProvider, LoadStateProvider, TimerL
             if let group = groupStore.current {
                 userStore.groupID = group.id
             }
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -91,9 +91,9 @@ public struct GroupMemberList: View, ViewDataProvider, LoadStateProvider, TimerL
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -133,10 +133,10 @@ public struct GroupMemberList: View, ViewDataProvider, LoadStateProvider, TimerL
         userStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        userStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        userStore.session = session
     }
 
     // MARK: - ListItemScrollable

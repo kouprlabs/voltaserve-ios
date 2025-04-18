@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOUser {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOUser {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -95,7 +95,7 @@ public struct VOUser {
         invitationID: String? = nil
     ) -> URL {
         var items: [URLQueryItem] = []
-        items.append(.init(name: "access_token", value: accessToken))
+        items.append(.init(name: "access_key", value: accessKey))
         if let organizationID {
             items.append(.init(name: "organization_id", value: organizationID))
         }
@@ -212,17 +212,17 @@ public struct VOUser {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(username)
-            hasher.combine(email)
-            hasher.combine(fullName)
-            hasher.combine(updateTime)
-            return hasher.finalize()
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(username)
+            builder.combine(email)
+            builder.combine(fullName)
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

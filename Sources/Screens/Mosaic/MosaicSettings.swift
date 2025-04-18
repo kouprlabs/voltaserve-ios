@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct MosaicSettings: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct MosaicSettings: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ErrorPresentable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var mosaicStore = MosaicStore()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -68,8 +68,8 @@ public struct MosaicSettings: View, ViewDataProvider, LoadStateProvider, TimerLi
         }
         .onAppear {
             mosaicStore.fileID = file.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -77,9 +77,9 @@ public struct MosaicSettings: View, ViewDataProvider, LoadStateProvider, TimerLi
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -168,9 +168,9 @@ public struct MosaicSettings: View, ViewDataProvider, LoadStateProvider, TimerLi
         mosaicStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        mosaicStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        mosaicStore.session = session
     }
 }

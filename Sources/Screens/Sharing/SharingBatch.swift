@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-struct SharingBatch: View, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+struct SharingBatch: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var sharingStore = SharingStore()
     @Environment(\.dismiss) private var dismiss
     @State private var selection: Tag = .users
@@ -55,8 +55,8 @@ struct SharingBatch: View, TokenDistributing {
                 }
             }
             .onAppear {
-                if let token = tokenStore.token {
-                    assignTokenToStores(token)
+                if let session = sessionStore.session {
+                    assignSessionToStores(session)
                 }
             }
         }
@@ -67,9 +67,9 @@ struct SharingBatch: View, TokenDistributing {
         case groups
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        sharingStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        sharingStore.session = session
     }
 }

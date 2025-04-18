@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct SnapshotList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct SnapshotList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var snapshotStore = SnapshotStore()
     @Environment(\.dismiss) private var dismiss
     private let fileID: String
@@ -68,8 +68,8 @@ public struct SnapshotList: View, ViewDataProvider, LoadStateProvider, TimerLife
         }
         .onAppear {
             snapshotStore.fileID = fileID
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -77,9 +77,9 @@ public struct SnapshotList: View, ViewDataProvider, LoadStateProvider, TimerLife
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -115,10 +115,10 @@ public struct SnapshotList: View, ViewDataProvider, LoadStateProvider, TimerLife
         snapshotStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        snapshotStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        snapshotStore.session = session
     }
 
     // MARK: - ListItemScrollable

@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct SignInWithLocal: View, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @State private var isProcessing = false
     @State private var email: String = ""
     @State private var password: String = ""
@@ -96,16 +96,16 @@ public struct SignInWithLocal: View, ErrorPresentable {
     }
 
     private func performSignIn() {
-        var token: VOToken.Value?
+        var session: VOSession.Value?
         withErrorHandling {
-            token = try await tokenStore.signInWithLocal(username: email, password: password)
+            session = try await sessionStore.signInWithLocal(username: email, password: password)
             return true
         } before: {
             isProcessing = true
         } success: {
-            if let token {
-                tokenStore.token = token
-                tokenStore.saveInKeychain(token)
+            if let session {
+                sessionStore.session = session
+                sessionStore.saveInKeychain(session)
                 onCompletion?()
             }
         } failure: { message in

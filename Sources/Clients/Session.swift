@@ -14,7 +14,7 @@ import Foundation
     import FoundationNetworking
 #endif
 
-public struct VOToken {
+public struct VOSession {
     let baseURL: String
 
     public init(baseURL: String) {
@@ -45,7 +45,7 @@ public struct VOToken {
     // MARK: - URLs
 
     public func url() -> URL {
-        URL(string: "\(baseURL)/token")!
+        URL(string: "\(baseURL)/session")!
     }
 
     // MARK: - Payloads
@@ -54,8 +54,8 @@ public struct VOToken {
         public let grantType: GrantType
         public let username: String?
         public let password: String?
-        public let refreshToken: String?
-        public let appleJWT: String?
+        public let refreshKey: String?
+        public let appleKey: String?
         public let appleFullName: String?
         public let locale: String?
 
@@ -63,16 +63,16 @@ public struct VOToken {
             grantType: GrantType,
             username: String? = nil,
             password: String? = nil,
-            refreshToken: String? = nil,
-            appleJWT: String? = nil,
+            refreshKey: String? = nil,
+            appleKey: String? = nil,
             appleFullName: String? = nil,
             locale: String? = nil
         ) {
             self.grantType = grantType
             self.username = username
             self.password = password
-            self.refreshToken = refreshToken
-            self.appleJWT = appleJWT
+            self.refreshKey = refreshKey
+            self.appleKey = appleKey
             self.appleFullName = appleFullName
             self.locale = locale
         }
@@ -85,11 +85,11 @@ public struct VOToken {
             if let password {
                 params["password"] = password
             }
-            if let refreshToken {
-                params["refresh_token"] = refreshToken
+            if let refreshKey {
+                params["refresh_key"] = refreshKey
             }
-            if let appleJWT {
-                params["apple_jwt"] = appleJWT
+            if let appleKey {
+                params["apple_key"] = appleKey
             }
             if let appleFullName {
                 params["apple_full_name"] = appleFullName
@@ -118,30 +118,30 @@ public struct VOToken {
 
     public enum GrantType: String, Codable {
         case password
-        case refreshToken = "refresh_token"
+        case refreshKey = "refresh_key"
         case apple
     }
 
     // MARK: - Types
 
     public struct Value: Codable, Equatable, Hashable {
-        public var accessToken: String
+        public var accessKey: String
         public var expiresIn: Int
-        public var tokenType: String
-        public var refreshToken: String
+        public var keyType: String
+        public var refreshKey: String
 
-        public init(accessToken: String, expiresIn: Int, tokenType: String, refreshToken: String) {
-            self.accessToken = accessToken
+        public init(accessKey: String, expiresIn: Int, keyType: String, refreshKey: String) {
+            self.accessKey = accessKey
             self.expiresIn = expiresIn
-            self.tokenType = tokenType
-            self.refreshToken = refreshToken
+            self.keyType = keyType
+            self.refreshKey = refreshKey
         }
 
         enum CodingKeys: String, CodingKey {
-            case accessToken = "access_token"
+            case accessKey = "access_key"
             case expiresIn = "expires_in"
-            case tokenType = "token_type"
-            case refreshToken = "refresh_token"
+            case keyType = "key_type"
+            case refreshKey = "refresh_key"
         }
     }
 }

@@ -16,21 +16,21 @@ public class ViewerOCRStore: ObservableObject {
 
     public var id: String? {
         didSet {
-            url = buildURL(id: id, token: token)
+            url = buildURL(id: id, session: session)
         }
     }
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            url = buildURL(id: id, token: token)
+            url = buildURL(id: id, session: session)
         }
     }
 
-    private func buildURL(id: String?, token: VOToken.Value?) -> URL? {
-        guard let id, let token else { return nil }
+    private func buildURL(id: String?, session: VOSession.Value?) -> URL? {
+        guard let id, let session else { return nil }
         return VOFile(
             baseURL: Config.shared.apiURL,
-            accessToken: token.accessToken
+            accessKey: session.accessKey
         ).urlForOCR(id, fileExtension: "pdf")
     }
 }

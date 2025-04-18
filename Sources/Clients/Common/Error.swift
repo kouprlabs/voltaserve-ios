@@ -84,7 +84,7 @@ public struct VOErrorResponse: Decodable, Error {
         case invalidJwt = "invalid_jwt"
         case invalidCredentials = "invalid_credentials"
         case emailNotConfimed = "email_not_confirmed"
-        case refreshTokenExpired = "refresh_token_expired"
+        case refreshKeyExpired = "refresh_key_expired"
         case invalidRequest = "invalid_request"
         case unsupportedGrantType = "unsupported_grant_type"
         case passwordValidationFailed = "password_validation_failed"

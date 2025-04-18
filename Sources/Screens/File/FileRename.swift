@@ -10,10 +10,11 @@
 
 import SwiftUI
 
-public struct FileRename: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing, FormValidatable,
+public struct FileRename: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
+    FormValidatable,
     ErrorPresentable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var fileStore = FileStore()
     @Environment(\.dismiss) private var dismiss
     @State private var isProcessing = false
@@ -64,8 +65,8 @@ public struct FileRename: View, ViewDataProvider, LoadStateProvider, TimerLifecy
         }
         .onAppear {
             fileStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -73,9 +74,9 @@ public struct FileRename: View, ViewDataProvider, LoadStateProvider, TimerLifecy
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -149,10 +150,10 @@ public struct FileRename: View, ViewDataProvider, LoadStateProvider, TimerLifecy
         fileStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        fileStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        fileStore.session = session
     }
 
     // MARK: - FormValidatable

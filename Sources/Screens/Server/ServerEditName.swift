@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct ServerEditName: View, FormValidatable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
     @State private var value = ""

@@ -11,10 +11,10 @@
 import Combine
 import SwiftUI
 
-public struct GroupList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct GroupList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var groupStore = GroupStore()
     @StateObject private var accountStore = AccountStore()
     @StateObject private var invitationStore = InvitationStore()
@@ -84,9 +84,9 @@ public struct GroupList: View, ViewDataProvider, LoadStateProvider, TimerLifecyc
             }
         }
         .onAppear {
-            accountStore.tokenStore = tokenStore
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            accountStore.sessionStore = sessionStore
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -94,9 +94,9 @@ public struct GroupList: View, ViewDataProvider, LoadStateProvider, TimerLifecyc
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -143,12 +143,12 @@ public struct GroupList: View, ViewDataProvider, LoadStateProvider, TimerLifecyc
         invitationStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        groupStore.token = token
-        accountStore.token = token
-        invitationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        groupStore.session = session
+        accountStore.session = session
+        invitationStore.session = session
     }
 
     // MARK: - ListItemScrollable

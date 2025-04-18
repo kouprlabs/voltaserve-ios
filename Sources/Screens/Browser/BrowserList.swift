@@ -11,10 +11,10 @@
 import Combine
 import SwiftUI
 
-public struct BrowserList: View, LoadStateProvider, ViewDataProvider, TimerLifecycle, TokenDistributing,
+public struct BrowserList: View, LoadStateProvider, ViewDataProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var browserStore = BrowserStore()
     @State private var tappedItem: VOFile.Entity?
     @State private var searchText = ""
@@ -100,8 +100,8 @@ public struct BrowserList: View, LoadStateProvider, ViewDataProvider, TimerLifec
         }
         .onAppear {
             browserStore.folderID = folderID
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -109,9 +109,9 @@ public struct BrowserList: View, LoadStateProvider, ViewDataProvider, TimerLifec
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -152,10 +152,10 @@ public struct BrowserList: View, LoadStateProvider, ViewDataProvider, TimerLifec
         browserStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        browserStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        browserStore.session = session
     }
 
     // MARK: - ListItemScrollable

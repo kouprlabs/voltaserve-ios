@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-struct InsightsSettings: View, TimerLifecycle, TokenDistributing, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+struct InsightsSettings: View, TimerLifecycle, SessionDistributing, ErrorPresentable {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var insightsStore = InsightsStore()
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -81,17 +81,17 @@ struct InsightsSettings: View, TimerLifecycle, TokenDistributing, ErrorPresentab
         }
         .onAppear {
             insightsStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
             }
         }
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
         .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
@@ -159,9 +159,9 @@ struct InsightsSettings: View, TimerLifecycle, TokenDistributing, ErrorPresentab
         insightsStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        insightsStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        insightsStore.session = session
     }
 }

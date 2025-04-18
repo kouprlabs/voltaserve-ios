@@ -156,20 +156,20 @@ public struct VOAccount {
     }
 
     public struct ResetPasswordOptions: Codable {
-        public let token: String
+        public let key: String
         public let newPassword: String
 
-        public init(token: String, newPassword: String) {
-            self.token = token
+        public init(key: String, newPassword: String) {
+            self.key = key
             self.newPassword = newPassword
         }
     }
 
     public struct ConfirmEmailOptions: Codable {
-        public let token: String
+        public let key: String
 
-        public init(token: String) {
-            self.token = token
+        public init(key: String) {
+            self.key = key
         }
     }
 

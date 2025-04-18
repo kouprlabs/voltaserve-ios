@@ -10,6 +10,6 @@
 
 import Foundation
 
-public protocol TokenDistributing {
-    func assignTokenToStores(_ token: VOToken.Value)
+public protocol SessionDistributing {
+    func assignSessionToStores(_ value: VOSession.Value)
 }

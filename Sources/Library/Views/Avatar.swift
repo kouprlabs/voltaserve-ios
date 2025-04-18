@@ -45,14 +45,14 @@ public struct VOAvatar: View {
     }
 
     private func randomColor(from string: String) -> Color {
-        var hash = 0
-        for char in string.unicodeScalars {
-            hash = Int(char.value) &+ ((hash << 5) &- hash)
+        var code = 0
+        for scalar in string.unicodeScalars {
+            code = Int(scalar.value) &+ ((code << 5) &- code)
         }
 
         var color = ""
         for index in 0..<3 {
-            let value = (hash >> (index * 8)) & 0xFF
+            let value = (code >> (index * 8)) & 0xFF
             color += String(format: "%02x", value)
         }
 

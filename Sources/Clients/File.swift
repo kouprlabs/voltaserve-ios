@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOFile {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     enum BaseURLError: Error {
@@ -33,7 +33,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -51,7 +51,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForPath(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -69,7 +69,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForCount(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -87,7 +87,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(id, options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -105,7 +105,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(id, options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -123,7 +123,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForUserPermissions(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -141,7 +141,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForGroupPermissions(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -163,7 +163,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForCreate(options))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -192,7 +192,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: url)
             request.httpMethod = method
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
 
             let boundary = UUID().uuidString
             request.setValue(
@@ -238,7 +238,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForName(id))
             request.httpMethod = "PATCH"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -257,7 +257,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -274,7 +274,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: url())
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -293,7 +293,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForMove(id, to: targetID))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -311,7 +311,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForMove())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -330,7 +330,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForCopy(id, to: targetID))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -348,7 +348,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForCopy())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -367,7 +367,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             var request = URLRequest(url: urlForGrantUserPermission())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
@@ -385,7 +385,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             var request = URLRequest(url: urlForRevokeUserPermission())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
@@ -403,7 +403,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             var request = URLRequest(url: urlForGrantGroupPermission())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
@@ -421,7 +421,7 @@ public struct VOFile {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, any Error>) in
             var request = URLRequest(url: urlForRevokeGroupPermission())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
@@ -518,23 +518,23 @@ public struct VOFile {
     }
 
     public func urlForOriginal(_ id: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForID(id))/original.\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForID(id))/original.\(fileExtension)?access_key=\(accessKey)")!
     }
 
     public func urlForPreview(_ id: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForID(id))/preview.\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForID(id))/preview.\(fileExtension)?access_key=\(accessKey)")!
     }
 
     public func urlForText(_ id: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForID(id))/text.\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForID(id))/text.\(fileExtension)?access_key=\(accessKey)")!
     }
 
     public func urlForOCR(_ id: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForID(id))/ocr.\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForID(id))/ocr.\(fileExtension)?access_key=\(accessKey)")!
     }
 
     public func urlForThumbnail(_ id: String, fileExtension: String) -> URL {
-        URL(string: "\(urlForID(id))/thumbnail.\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForID(id))/thumbnail.\(fileExtension)?access_key=\(accessKey)")!
     }
 
     public func urlForUserPermissions(_ id: String) -> URL {
@@ -849,19 +849,19 @@ public struct VOFile {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(name)
-            hasher.combine(snapshot?.id)
-            hasher.combine(snapshot?.task?.status)
-            hasher.combine(isShared)
-            hasher.combine(permission.rawValue)
-            hasher.combine(updateTime)
-            return hasher.finalize()
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(name)
+            builder.combine(snapshot?.id)
+            builder.combine(snapshot?.task?.status)
+            builder.combine(isShared)
+            builder.combine(permission.rawValue)
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

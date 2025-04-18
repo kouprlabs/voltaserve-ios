@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct InvitationOverview: View, TokenDistributing, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct InvitationOverview: View, SessionDistributing, ErrorPresentable {
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var invitationStore: InvitationStore
     @StateObject private var userStore = UserStore()
     @Environment(\.dismiss) private var dismiss
@@ -136,13 +136,13 @@ public struct InvitationOverview: View, TokenDistributing, ErrorPresentable {
         .navigationTitle("#\(invitation.id)")
         .onAppear {
             userStore.invitationID = invitation.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
         .voErrorSheet(isPresented: $errorIsPresented, message: errorMessage)
@@ -205,9 +205,9 @@ public struct InvitationOverview: View, TokenDistributing, ErrorPresentable {
     @State public var errorIsPresented = false
     @State public var errorMessage: String?
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        userStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        userStore.session = session
     }
 }

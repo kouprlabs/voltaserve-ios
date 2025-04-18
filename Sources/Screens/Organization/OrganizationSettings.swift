@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct OrganizationSettings: View, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var organizationStore: OrganizationStore
     @Environment(\.dismiss) private var dismiss
     @State private var leaveConfirmationIsPresented = false

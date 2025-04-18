@@ -12,7 +12,7 @@ import VoltaserveCore
 
 class ClientFactory {
     private let config = Config()
-    private let token: TokenFactory
+    private let sessionFactory: SessionFactory
     private var _organization: VOOrganization?
     private var _workspace: VOWorkspace?
     private var _file: VOFile?
@@ -27,15 +27,15 @@ class ClientFactory {
     private var _identityUser: VOIdentityUser?
     private var _account: VOAccount?
 
-    init(_ token: TokenFactory) async throws {
-        self.token = token
+    init(_ sessionFactory: SessionFactory) async throws {
+        self.sessionFactory = sessionFactory
     }
 
     var organization: VOOrganization {
         if _organization == nil {
             _organization = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _organization!
@@ -45,7 +45,7 @@ class ClientFactory {
         if _workspace == nil {
             _workspace = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _workspace!
@@ -55,7 +55,7 @@ class ClientFactory {
         if _file == nil {
             _file = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _file!
@@ -65,7 +65,7 @@ class ClientFactory {
         if _snapshot == nil {
             _snapshot = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _snapshot!
@@ -75,7 +75,7 @@ class ClientFactory {
         if _task == nil {
             _task = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _task!
@@ -85,7 +85,7 @@ class ClientFactory {
         if _group == nil {
             _group = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _group!
@@ -95,7 +95,7 @@ class ClientFactory {
         if _invitation == nil {
             _invitation = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _invitation!
@@ -105,7 +105,7 @@ class ClientFactory {
         if _storage == nil {
             _storage = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _storage!
@@ -115,7 +115,7 @@ class ClientFactory {
         if _insights == nil {
             _insights = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _insights!
@@ -125,7 +125,7 @@ class ClientFactory {
         if _mosaic == nil {
             _mosaic = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _mosaic!
@@ -135,7 +135,7 @@ class ClientFactory {
         if _user == nil {
             _user = .init(
                 baseURL: config.apiURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _user!
@@ -145,7 +145,7 @@ class ClientFactory {
         if _identityUser == nil {
             _identityUser = .init(
                 baseURL: config.idpURL,
-                accessToken: token.accessToken
+                accessKey: sessionFactory.accessKey
             )
         }
         return _identityUser!

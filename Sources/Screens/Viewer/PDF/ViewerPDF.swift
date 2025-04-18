@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct ViewerPDF: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct ViewerPDF: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var viewerPDFStore = ViewerPDFStore()
     private let file: VOFile.Entity
 
@@ -33,18 +33,20 @@ public struct ViewerPDF: View {
         }
         .onAppear {
             viewerPDFStore.id = file.id
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
             }
         }
     }
 
-    private func assignTokenToStores(_ token: VOToken.Value) {
-        viewerPDFStore.token = token
+    // MARK: - SessionDistributing
+
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        viewerPDFStore.session = session
     }
 }

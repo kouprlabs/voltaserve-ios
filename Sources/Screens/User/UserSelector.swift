@@ -10,10 +10,10 @@
 
 import SwiftUI
 
-public struct UserSelector: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct UserSelector: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var userStore = UserStore()
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
@@ -94,8 +94,8 @@ public struct UserSelector: View, ViewDataProvider, LoadStateProvider, TimerLife
             userStore.groupID = groupID
             userStore.excludeGroupMembers = excludeGroupMembers
             userStore.excludeMe = excludeMe
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -103,9 +103,9 @@ public struct UserSelector: View, ViewDataProvider, LoadStateProvider, TimerLife
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -145,10 +145,10 @@ public struct UserSelector: View, ViewDataProvider, LoadStateProvider, TimerLife
         userStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        userStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        userStore.session = session
     }
 
     // MARK: - ListItemScrollable

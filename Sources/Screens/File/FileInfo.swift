@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct FileInfo: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct FileInfo: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var fileStore = FileStore()
     @Environment(\.dismiss) private var dismiss
     private let file: VOFile.Entity
@@ -145,8 +145,8 @@ public struct FileInfo: View, ViewDataProvider, LoadStateProvider, TimerLifecycl
         }
         .onAppear {
             fileStore.file = file
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -197,9 +197,9 @@ public struct FileInfo: View, ViewDataProvider, LoadStateProvider, TimerLifecycl
         fileStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        fileStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        fileStore.session = session
     }
 }

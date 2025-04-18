@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOInvitation {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForListIncoming(urlForIncoming(), options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbeIncoming(urlForIncoming(), options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForIncomingCount())
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -83,7 +83,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForListOutgoing(urlForOutgoing(), options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -101,7 +101,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbeOutgoing(urlForOutgoing(), options: options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -119,7 +119,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: url())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             request.setJSONBody(options, continuation: continuation)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
@@ -138,7 +138,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -155,7 +155,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForResend(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -172,7 +172,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForAccept(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -189,7 +189,7 @@ public struct VOInvitation {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForDecline(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -426,15 +426,15 @@ public struct VOInvitation {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(status.rawValue)
-            hasher.combine(updateTime)
-            return hasher.finalize()
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(status.rawValue)
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

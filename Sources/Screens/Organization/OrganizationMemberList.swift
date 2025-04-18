@@ -11,10 +11,10 @@
 import Combine
 import SwiftUI
 
-public struct OrganizationMemberList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct OrganizationMemberList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var organizationStore: OrganizationStore
     @StateObject private var userStore = UserStore()
     @State private var searchText = ""
@@ -67,8 +67,8 @@ public struct OrganizationMemberList: View, ViewDataProvider, LoadStateProvider,
             if let organization = organizationStore.current {
                 userStore.organizationID = organization.id
             }
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -76,9 +76,9 @@ public struct OrganizationMemberList: View, ViewDataProvider, LoadStateProvider,
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -118,10 +118,10 @@ public struct OrganizationMemberList: View, ViewDataProvider, LoadStateProvider,
         userStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        userStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        userStore.session = session
     }
 
     // MARK: - ListItemScrollable

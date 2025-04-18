@@ -12,7 +12,7 @@ import SwiftData
 import SwiftUI
 
 public struct ServerCreate: View, FormValidatable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) var dismiss
     @Query private var servers: [Server]
@@ -96,7 +96,7 @@ public struct ServerCreate: View, FormValidatable {
             context.insert(server)
             try? context.save()
 
-            tokenStore.recreateClient()
+            sessionStore.recreateClient()
 
             DispatchQueue.main.async {
                 dismiss()

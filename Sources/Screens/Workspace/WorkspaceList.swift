@@ -11,10 +11,10 @@
 import Combine
 import SwiftUI
 
-public struct WorkspaceList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, TokenDistributing,
+public struct WorkspaceList: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing,
     ListItemScrollable
 {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var workspaceStore = WorkspaceStore()
     @StateObject private var accountStore = AccountStore()
     @StateObject private var invitationStore = InvitationStore()
@@ -85,9 +85,9 @@ public struct WorkspaceList: View, ViewDataProvider, LoadStateProvider, TimerLif
             }
         }
         .onAppear {
-            accountStore.tokenStore = tokenStore
-            if let token = tokenStore.token {
-                assignTokenToStores(token)
+            accountStore.sessionStore = sessionStore
+            if let session = sessionStore.session {
+                assignSessionToStores(session)
                 startTimers()
                 onAppearOrChange()
             }
@@ -95,9 +95,9 @@ public struct WorkspaceList: View, ViewDataProvider, LoadStateProvider, TimerLif
         .onDisappear {
             stopTimers()
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if let newToken {
-                assignTokenToStores(newToken)
+        .onChange(of: sessionStore.session) { _, newSession in
+            if let newSession {
+                assignSessionToStores(newSession)
                 onAppearOrChange()
             }
         }
@@ -144,12 +144,12 @@ public struct WorkspaceList: View, ViewDataProvider, LoadStateProvider, TimerLif
         invitationStore.stopTimer()
     }
 
-    // MARK: - TokenDistributing
+    // MARK: - SessionDistributing
 
-    public func assignTokenToStores(_ token: VOToken.Value) {
-        workspaceStore.token = token
-        accountStore.token = token
-        invitationStore.token = token
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        workspaceStore.session = session
+        accountStore.session = session
+        invitationStore.session = session
     }
 
     // MARK: - ListItemScrollable

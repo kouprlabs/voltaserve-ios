@@ -25,12 +25,12 @@ public class OrganizationStore: ObservableObject {
     private var organizationClient: VOOrganization?
     public let searchPublisher = PassthroughSubject<String, Never>()
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 organizationClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

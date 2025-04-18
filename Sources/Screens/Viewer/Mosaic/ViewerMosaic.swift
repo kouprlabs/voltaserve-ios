@@ -10,8 +10,8 @@
 
 import SwiftUI
 
-public struct ViewerMosaic: View {
-    @EnvironmentObject private var tokenStore: TokenStore
+public struct ViewerMosaic: View, SessionDistributing {
+    @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var viewerMosaicStore = ViewerMosaicStore()
     @State private var dragOffset = CGSize.zero
     @State private var lastDragOffset = CGSize.zero
@@ -116,16 +116,16 @@ public struct ViewerMosaic: View {
                         }
                     }
                     .onAppear {
-                        if let token = tokenStore.token {
-                            assignTokenToStores(token)
+                        if let session = sessionStore.session {
+                            assignSessionToStores(session)
                             Task {
                                 try await viewerMosaicStore.loadMosaic(file.id)
                             }
                         }
                     }
-                    .onChange(of: tokenStore.token) { _, newToken in
-                        if let newToken {
-                            assignTokenToStores(newToken)
+                    .onChange(of: sessionStore.session) { _, newSession in
+                        if let newSession {
+                            assignSessionToStores(newSession)
                         }
                     }
                 }
@@ -136,10 +136,6 @@ public struct ViewerMosaic: View {
         }
     }
 
-    private func assignTokenToStores(_ token: VOToken.Value) {
-        viewerMosaicStore.token = token
-    }
-
     private func resetMosaicPosition() {
         dragOffset = .zero
         lastDragOffset = .zero
@@ -147,5 +143,11 @@ public struct ViewerMosaic: View {
 
     private enum Constants {
         static let extraTilesToLoad = 1
+    }
+
+    // MARK: - SessionDistributing
+
+    public func assignSessionToStores(_ session: VOSession.Value) {
+        viewerMosaicStore.session = session
     }
 }

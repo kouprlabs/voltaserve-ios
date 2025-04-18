@@ -29,12 +29,12 @@ public class UserStore: ObservableObject {
     public var excludeMe: Bool?
     public var invitationID: String?
 
-    public var token: VOToken.Value? {
+    public var session: VOSession.Value? {
         didSet {
-            if let token {
+            if let session {
                 userClient = .init(
                     baseURL: Config.shared.apiURL,
-                    accessToken: token.accessToken
+                    accessKey: session.accessKey
                 )
             }
         }

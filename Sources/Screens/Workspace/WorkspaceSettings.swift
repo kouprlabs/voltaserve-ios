@@ -11,7 +11,7 @@
 import SwiftUI
 
 public struct WorkspaceSettings: View, ViewDataProvider, LoadStateProvider, ErrorPresentable {
-    @EnvironmentObject private var tokenStore: TokenStore
+    @EnvironmentObject private var sessionStore: SessionStore
     @ObservedObject private var workspaceStore: WorkspaceStore
     @Environment(\.dismiss) private var dismiss
     @State private var deleteConfirmationIsPresentable = false
@@ -99,12 +99,12 @@ public struct WorkspaceSettings: View, ViewDataProvider, LoadStateProvider, Erro
         }
         .navigationTitle("Settings")
         .onAppear {
-            if tokenStore.token != nil {
+            if sessionStore.session != nil {
                 onAppearOrChange()
             }
         }
-        .onChange(of: tokenStore.token) { _, newToken in
-            if newToken != nil {
+        .onChange(of: sessionStore.session) { _, newSession in
+            if newSession != nil {
                 onAppearOrChange()
             }
         }

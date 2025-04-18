@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOSnapshot {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -83,7 +83,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForLanguages())
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -101,7 +101,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForActivate(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -118,7 +118,7 @@ public struct VOSnapshot {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForDetach(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -294,28 +294,28 @@ public struct VOSnapshot {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(version)
-            hasher.combine(language)
-            hasher.combine(summary)
-            hasher.combine(intent)
-            hasher.combine(capabilities.original)
-            hasher.combine(capabilities.preview)
-            hasher.combine(capabilities.ocr)
-            hasher.combine(capabilities.text)
-            hasher.combine(capabilities.summary)
-            hasher.combine(capabilities.entities)
-            hasher.combine(capabilities.mosaic)
-            hasher.combine(capabilities.thumbnail)
-            hasher.combine(isActive)
-            hasher.combine(task?.status)
-            hasher.combine(updateTime)
-            return hasher.finalize()
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(version)
+            builder.combine(language)
+            builder.combine(summary)
+            builder.combine(intent)
+            builder.combine(capabilities.original)
+            builder.combine(capabilities.preview)
+            builder.combine(capabilities.ocr)
+            builder.combine(capabilities.text)
+            builder.combine(capabilities.summary)
+            builder.combine(capabilities.entities)
+            builder.combine(capabilities.mosaic)
+            builder.combine(capabilities.thumbnail)
+            builder.combine(isActive)
+            builder.combine(task?.status)
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

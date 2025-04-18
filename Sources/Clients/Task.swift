@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOTask {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForID(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -47,7 +47,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForList(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -65,7 +65,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForProbe(options))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -83,7 +83,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForCount())
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -101,7 +101,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForDimiss(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleEmptyResponse(
                     continuation: continuation,
@@ -118,7 +118,7 @@ public struct VOTask {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForDismiss())
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -257,21 +257,21 @@ public struct VOTask {
         public let updateTime: String?
 
         var displayID: String {
-            "\(id)-\(self.contentHash)"
+            "\(id)-\(self.objectCode)"
         }
 
-        var contentHash: Int {
-            var hasher = Hasher()
-            hasher.combine(id)
-            hasher.combine(name)
-            hasher.combine(error)
-            hasher.combine(percentage)
-            hasher.combine(status.rawValue)
+        var objectCode: Int {
+            var builder = Hasher()
+            builder.combine(id)
+            builder.combine(name)
+            builder.combine(error)
+            builder.combine(percentage)
+            builder.combine(status.rawValue)
             if let payload {
-                hasher.combine(payload.object)
+                builder.combine(payload.object)
             }
-            hasher.combine(updateTime)
-            return hasher.finalize()
+            builder.combine(updateTime)
+            return builder.finalize()
         }
 
         public init(

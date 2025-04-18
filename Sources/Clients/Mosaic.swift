@@ -16,11 +16,11 @@ import Foundation
 
 public struct VOMosaic {
     let baseURL: String
-    let accessToken: String
+    let accessKey: String
 
-    public init(baseURL: String, accessToken: String) {
+    public init(baseURL: String, accessKey: String) {
         self.baseURL = URL(string: baseURL)!.appendingPathComponent("v3").absoluteString
-        self.accessToken = accessToken
+        self.accessKey = accessKey
     }
 
     // MARK: - Requests
@@ -29,7 +29,7 @@ public struct VOMosaic {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForMetadata(id))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -59,7 +59,7 @@ public struct VOMosaic {
                     fileExtension: fileExtension
                 ))
             request.httpMethod = "GET"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleDataResponse(
                     continuation: continuation,
@@ -76,7 +76,7 @@ public struct VOMosaic {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForFile(id))
             request.httpMethod = "POST"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -94,7 +94,7 @@ public struct VOMosaic {
         try await withCheckedThrowingContinuation { continuation in
             var request = URLRequest(url: urlForFile(id))
             request.httpMethod = "DELETE"
-            request.appendAuthorizationHeader(accessToken)
+            request.appendAuthorizationHeader(accessKey)
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 handleJSONResponse(
                     continuation: continuation,
@@ -131,7 +131,7 @@ public struct VOMosaic {
     ) -> URL {
         // swift-format-ignore
         // swiftlint:disable:next line_length
-        URL(string: "\(urlForFile(id))/zoom_level/\(zoomLevel.index)/row/\(row)/column/\(column)/extension/\(fileExtension)?access_token=\(accessToken)")!
+        URL(string: "\(urlForFile(id))/zoom_level/\(zoomLevel.index)/row/\(row)/column/\(column)/extension/\(fileExtension)?access_key=\(accessKey)")!
     }
 
     // MARK: - Types
