@@ -13,6 +13,7 @@ import SwiftUI
 struct SharingBatch: View, SessionDistributing {
     @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var sharingStore = SharingStore()
+    @ObservedObject private var fileStore: FileStore
     @Environment(\.dismiss) private var dismiss
     @State private var selection: Tag = .users
     @State private var user: VOUser.Entity?
@@ -25,9 +26,14 @@ struct SharingBatch: View, SessionDistributing {
     private let fileIDs: [String]
     private let organization: VOOrganization.Entity
 
-    public init(_ fileIDs: [String], organization: VOOrganization.Entity) {
+    public init(
+        _ fileIDs: [String],
+        organization: VOOrganization.Entity,
+        fileStore: FileStore
+    ) {
         self.fileIDs = fileIDs
         self.organization = organization
+        self.fileStore = fileStore
     }
 
     public var body: some View {
@@ -39,6 +45,7 @@ struct SharingBatch: View, SessionDistributing {
                             fileIDs: fileIDs,
                             organization: organization,
                             sharingStore: sharingStore,
+                            fileStore: fileStore,
                             enableCancel: true
                         )
                     }
@@ -49,6 +56,7 @@ struct SharingBatch: View, SessionDistributing {
                             fileIDs: fileIDs,
                             organization: organization,
                             sharingStore: sharingStore,
+                            fileStore: fileStore,
                             enableCancel: true
                         )
                     }

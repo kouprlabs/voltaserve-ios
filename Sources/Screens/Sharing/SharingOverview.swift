@@ -13,6 +13,7 @@ import SwiftUI
 public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerLifecycle, SessionDistributing {
     @EnvironmentObject private var sessionStore: SessionStore
     @StateObject private var sharingStore = SharingStore()
+    @ObservedObject private var fileStore: FileStore
     @Environment(\.dismiss) private var dismiss
     @State private var selection: Tag = .users
     @State private var user: VOUser.Entity?
@@ -22,8 +23,9 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
     @State private var groupPermissionCount = 0
     private let file: VOFile.Entity
 
-    public init(_ file: VOFile.Entity) {
+    public init(_ file: VOFile.Entity, fileStore: FileStore) {
         self.file = file
+        self.fileStore = fileStore
     }
 
     public var body: some View {
@@ -34,7 +36,8 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
                         SharingUserPermissions(
                             file.id,
                             organization: file.workspace.organization,
-                            sharingStore: sharingStore
+                            sharingStore: sharingStore,
+                            fileStore: fileStore
                         )
                     }
                     .badge(userPermissionCount)
@@ -42,7 +45,8 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
                         SharingGroupPermissions(
                             file.id,
                             organization: file.workspace.organization,
-                            sharingStore: sharingStore
+                            sharingStore: sharingStore,
+                            fileStore: fileStore
                         )
                     }
                     .badge(groupPermissionCount)
@@ -56,13 +60,15 @@ public struct SharingOverview: View, ViewDataProvider, LoadStateProvider, TimerL
                                 SharingUserForm(
                                     fileIDs: [file.id],
                                     organization: file.workspace.organization,
-                                    sharingStore: sharingStore
+                                    sharingStore: sharingStore,
+                                    fileStore: fileStore
                                 )
                             } else if selection == .groups {
                                 SharingGroupForm(
                                     fileIDs: [file.id],
                                     organization: file.workspace.organization,
-                                    sharingStore: sharingStore
+                                    sharingStore: sharingStore,
+                                    fileStore: fileStore
                                 )
                             }
                         } label: {

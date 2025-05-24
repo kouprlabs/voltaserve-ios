@@ -21,11 +21,7 @@ public struct FileSheetRename: ViewModifier {
         content
             .sheet(isPresented: $fileStore.renameIsPresented) {
                 if !fileStore.selection.isEmpty, let file = fileStore.selectionFiles.first {
-                    FileRename(file) { updatedFile in
-                        if let index = fileStore.entities?.firstIndex(where: { $0.id == file.id }) {
-                            fileStore.entities?[index] = updatedFile
-                        }
-                    }
+                    FileRename(file, fileStore: fileStore)
                 }
             }
     }

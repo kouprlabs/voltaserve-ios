@@ -12,6 +12,7 @@ import SwiftUI
 
 public struct SharingUserForm: View, FormValidatable, ErrorPresentable {
     @ObservedObject private var sharingStore: SharingStore
+    @ObservedObject private var fileStore: FileStore
     @Environment(\.dismiss) private var dismiss
     @State private var user: VOUser.Entity?
     @State private var permission: VOPermission.Value?
@@ -29,6 +30,7 @@ public struct SharingUserForm: View, FormValidatable, ErrorPresentable {
         fileIDs: [String],
         organization: VOOrganization.Entity,
         sharingStore: SharingStore,
+        fileStore: FileStore,
         predefinedUser: VOUser.Entity? = nil,
         defaultPermission: VOPermission.Value? = nil,
         enableCancel: Bool = false,
@@ -37,6 +39,7 @@ public struct SharingUserForm: View, FormValidatable, ErrorPresentable {
         self.fileIDs = fileIDs
         self.organization = organization
         self.sharingStore = sharingStore
+        self.fileStore = fileStore
         self.predefinedUser = predefinedUser
         self.defaultPermission = defaultPermission
         self.enableCancel = enableCancel
@@ -139,6 +142,8 @@ public struct SharingUserForm: View, FormValidatable, ErrorPresentable {
         guard let user, let permission else { return }
         withErrorHandling {
             try await sharingStore.grantUserPermission(ids: fileIDs, userID: user.id, permission: permission)
+            try await sharingStore.syncUserPermissions()
+            try await fileStore.syncEntities()
             return true
         } before: {
             isGranting = true
@@ -156,6 +161,8 @@ public struct SharingUserForm: View, FormValidatable, ErrorPresentable {
         guard let user, fileIDs.count == 1, let fileID = fileIDs.first else { return }
         withErrorHandling {
             try await sharingStore.revokeUserPermission(id: fileID, userID: user.id)
+            try await sharingStore.syncUserPermissions()
+            try await fileStore.syncEntities()
             return true
         } before: {
             isRevoking = true

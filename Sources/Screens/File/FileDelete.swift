@@ -69,7 +69,9 @@ public struct FileDelete: View {
         withErrorHandling(delaySeconds: 1) {
             result = try await fileStore.delete(Array(fileStore.selection))
             if let result {
-                reflectDeleteInStore(result)
+                if !result.succeeded.isEmpty {
+                    reflectDeleteInStore(result)
+                }
                 if result.failed.isEmpty {
                     return true
                 } else {

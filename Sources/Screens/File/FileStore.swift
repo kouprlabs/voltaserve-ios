@@ -336,6 +336,46 @@ public class FileStore: ObservableObject {
         return nil
     }
 
+    // MARK: - Sync
+
+    public func syncEntities() async throws {
+        if let current = await self.file, let entities = await self.entities {
+            let list = try await self.fetchList(
+                current.id,
+                page: 1,
+                size: entities.count > Constants.pageSize ? entities.count : Constants.pageSize
+            )
+            if let list {
+                await MainActor.run {
+                    self.entities = list.data
+                    self.entitiesError = nil
+                }
+            }
+        }
+    }
+
+    public func syncFile() async throws {
+        if await self.file != nil {
+            let file = try await self.fetchFile()
+            if let file {
+                await MainActor.run {
+                    self.file = file
+                    self.fileError = nil
+                }
+            }
+        }
+    }
+
+    public func syncTaskCount() async throws {
+        if await self.taskCount != nil {
+            let taskCount = try await self.fetchTaskCount()
+            await MainActor.run {
+                self.taskCount = taskCount
+                self.taskCountError = nil
+            }
+        }
+    }
+
     // MARK: - URL
 
     public func urlForThumbnail(_ id: String, fileExtension: String) -> URL? {
@@ -411,35 +451,9 @@ public class FileStore: ObservableObject {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             Task.detached {
-                if let current = await self.file, let entities = await self.entities {
-                    let list = try await self.fetchList(
-                        current.id,
-                        page: 1,
-                        size: entities.count > Constants.pageSize ? entities.count : Constants.pageSize
-                    )
-                    if let list {
-                        await MainActor.run {
-                            self.entities = list.data
-                            self.entitiesError = nil
-                        }
-                    }
-                }
-                if await self.file != nil {
-                    let file = try await self.fetchFile()
-                    if let file {
-                        await MainActor.run {
-                            self.file = file
-                            self.fileError = nil
-                        }
-                    }
-                }
-                if await self.taskCount != nil {
-                    let taskCount = try await self.fetchTaskCount()
-                    await MainActor.run {
-                        self.taskCount = taskCount
-                        self.taskCountError = nil
-                    }
-                }
+                try await self.syncEntities()
+                try await self.syncFile()
+                try await self.syncTaskCount()
             }
         }
     }

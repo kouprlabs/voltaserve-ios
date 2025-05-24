@@ -21,11 +21,11 @@ public struct FileSheetSharing: ViewModifier {
         content
             .sheet(isPresented: $fileStore.sharingIsPresented) {
                 if let file {
-                    SharingOverview(file)
+                    SharingOverview(file, fileStore: fileStore)
                 } else if fileStore.selection.count > 1,
                     let organization = fileStore.selectionFiles.first?.workspace.organization
                 {
-                    SharingBatch(Array(fileStore.selection), organization: organization)
+                    SharingBatch(Array(fileStore.selection), organization: organization, fileStore: fileStore)
                 }
             }
     }

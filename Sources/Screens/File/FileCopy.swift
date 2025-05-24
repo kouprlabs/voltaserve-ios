@@ -70,10 +70,13 @@ public struct FileCopy: View {
         var result: VOFile.CopyResult?
         withErrorHandling(delaySeconds: 1) {
             result = try await fileStore.copy(Array(fileStore.selection), to: destinationID)
-            if fileStore.isLastPage() {
-                fileStore.fetchNextPage()
-            }
             if let result {
+                if !result.succeeded.isEmpty {
+                    await try fileStore.syncEntities()
+                    if fileStore.isLastPage() {
+                        fileStore.fetchNextPage()
+                    }
+                }
                 if result.failed.isEmpty {
                     return true
                 } else {

@@ -71,7 +71,9 @@ public struct FileMove: View {
         withErrorHandling(delaySeconds: 1) {
             result = try await fileStore.move(Array(fileStore.selection), to: destinationID)
             if let result {
-                reflectMoveInStore(result)
+                if !result.succeeded.isEmpty {
+                    reflectMoveInStore(result)
+                }
                 if result.failed.isEmpty {
                     return true
                 } else {

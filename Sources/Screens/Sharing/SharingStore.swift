@@ -107,31 +107,42 @@ public class SharingStore: ObservableObject {
         try await fileClient?.revokeGroupPermission(.init(ids: [id], groupID: groupID))
     }
 
+    // MARK: - Sync
+
+    public func syncUserPermissions() async throws {
+        guard let fileID = await self.fileID else { return }
+        if await self.userPermissions != nil {
+            let values = try await self.fetchUserPermissions(fileID)
+            if let values {
+                await MainActor.run {
+                    self.userPermissions = values
+                    self.userPermissionsError = nil
+                }
+            }
+        }
+    }
+
+    public func syncGroupPermissions() async throws {
+        guard let fileID = await self.fileID else { return }
+        if await self.groupPermissions != nil {
+            let values = try await self.fetchGroupPermissions(fileID)
+            if let values {
+                await MainActor.run {
+                    self.groupPermissions = values
+                    self.groupPermissionsError = nil
+                }
+            }
+        }
+    }
+
     // MARK: - Timer
 
     public func startTimer() {
         guard timer == nil else { return }
         timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
             Task.detached {
-                guard let fileID = await self.fileID else { return }
-                if await self.userPermissions != nil {
-                    let values = try await self.fetchUserPermissions(fileID)
-                    if let values {
-                        await MainActor.run {
-                            self.userPermissions = values
-                            self.userPermissionsError = nil
-                        }
-                    }
-                }
-                if await self.groupPermissions != nil {
-                    let values = try await self.fetchGroupPermissions(fileID)
-                    if let values {
-                        await MainActor.run {
-                            self.groupPermissions = values
-                            self.groupPermissionsError = nil
-                        }
-                    }
-                }
+                try await self.syncUserPermissions()
+                try await self.syncGroupPermissions()
             }
         }
     }

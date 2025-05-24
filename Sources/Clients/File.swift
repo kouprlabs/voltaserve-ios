@@ -664,7 +664,7 @@ public struct VOFile {
         public var label: String {
             switch self {
             case .asc:
-                return "Sort Asceding"
+                return "Sort Ascending"
             case .desc:
                 return "Sort Descending"
             }
